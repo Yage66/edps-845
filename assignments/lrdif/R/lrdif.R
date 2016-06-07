@@ -6,10 +6,23 @@
 #' @details The logistic regression is a commonly used method to
 #' dectect DIF.
 #'
-#' @param Data   matrix or data.frame of scored item responses.
+#' @param Data   Data is the matrix or data.frame of scored item responses, except for
+#' the first column which corresponds to group membership (represented by 0s and 1s).
+#'
+#' @param itemn  Itemn is the specific item that you want to test for the presence of
+#' DIF.Because the first column of the data matrix is the group column, so the
+#' column  itemn + 1 will be read for item.
+#'
+#' @param groupcolumn  groupcolumn is the group membership (represented by 0s and 1s).
+#' This is set to 1 by default, which represents the first column in the dataset.
+#'
+#' @param alpha  alpha is used to specificy a confidence level. This is set to .05
+#' (a confidence level of .95) by default.
+#'
+#' @param filename filename is the name of the dataset you want to test for DIF.
+#'
 #'
 #' @export
-
 
 
 lrdif <- function(Data, itemn, groupcolumn = 1, alpha = .05){
@@ -27,10 +40,10 @@ lrdif <- function(Data, itemn, groupcolumn = 1, alpha = .05){
   # model1, P(item1 = 1 | x)
   model1 <- glm(formula=item ~ total.score, family=binomial(link="logit"))
 
-  #model2, P(item1 = 1 | x,g)
+  # model2, P(item1 = 1 | x,g)
   model2 <- glm(formula=item ~ total.score + group, family=binomial(link="logit"))
 
-  #model3, P(item1 = 1 | x,g,x*g)
+  # model3, P(item1 = 1 | x,g,x*g)
   model3 <- glm(formula=item ~ total.score + group + total.score * group, family=binomial(link="logit"))
 
   #Extract the log likelihoods
@@ -51,20 +64,37 @@ lrdif <- function(Data, itemn, groupcolumn = 1, alpha = .05){
 
   if(chi_32 > chisig1){
     p <- 2* pchisq(chi_32[1], 1, lower.tail=F)
-    cat("There is significant nonuniform DIF, p =", "and chi-square =")
+    cat("There is significant nonuniform DIF, p =", format(p, digits=4),
+        "and chi-square =", format(chi_32[1], digits=4), "for model 3 versus model 2.")
   }
   if(chi_21 > chisig1){
     p <- 2* pchisq(chi_21[1], 1, lower.tail=F)
-    cat("There is significant uniform DIF, p =", "and chi-square =")
+    cat("There is significant uniform DIF, p =", format(p, digits=4),
+        "and chi-square =", format(chi_21[1], digits=4), "for model 2 versus model 1.","\n")
   }
   if(chi_31 > chisig2 && chi_21 < chisig1 && chi_31 < chisig2){
-    print("There is some form of DIF present")
+    print("There is some form of DIF present","\n")
   }
   if(chi_32 < chisig1 && chi_21 < chisig1 && chi_31 < chisig2 )
   {
     p <- pchisq(chi_31[1], 2, lower.tail=F)
-    cat("There is no significant DIF, p =", "and chi-square =")
+    cat("There is no significant DIF, p =", format(p, digits=4),
+        "and chi-square =", format(chi_31[1], digits=4), "for model 3 versus model 1.","\n")
   }
 }
 
+
+ #Testing DIF for all items in the dataset
+
+lrdif_total <- function(filename){
+
+  filedata <- read.table(filename)
+
+  ncol = dim(filedata)[2] - 1
+
+  for(i in 1:ncol){
+    lrdif(filedata,i,1,0.05)
+  }
+
+}
 

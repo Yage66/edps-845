@@ -7,7 +7,20 @@
 lrdif(Data, itemn, groupcolumn = 1, alpha = 0.05)
 }
 \arguments{
-\item{Data}{matrix or data.frame of scored item responses.}
+\item{Data}{Data is the matrix or data.frame of scored item responses, except for
+the first column which corresponds to group membership (represented by 0s and 1s).}
+
+\item{itemn}{Itemn is the specific item that you want to test for the presence of
+DIF.Because the first column of the data matrix is the group column, so the
+column  itemn + 1 will be read for item.}
+
+\item{groupcolumn}{groupcolumn is the group membership (represented by 0s and 1s).
+This is set to 1 by default, which represents the first column in the dataset.}
+
+\item{alpha}{alpha is used to specificy a confidence level. This is set to .05
+(a confidence level of .95) by default.}
+
+\item{filename}{filename is the name of the dataset you want to test for DIF.}
 }
 \description{
 This function use logistic regression to detect
