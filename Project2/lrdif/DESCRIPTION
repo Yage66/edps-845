@@ -1,0 +1,13 @@
+Package: lrdif
+Type: Package
+Title: Using logistic Regression Method to Detect Dichotomous Differential Item Functioning (DIF)
+Version: 0.1.0
+Authors@R: person("Yage", "Guo", email = "yageguo@gmail.com", role = c("aut", "cre"))
+Description: This package use logistic regression to detect differential item functioning among dichotomously scored items.
+Date: 2016-06-03
+Maintainer: Yage Guo <yageguo@gmail.com>
+Depends: R (>= 3.2.4)
+License: file LICENSE
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 5.0.1
